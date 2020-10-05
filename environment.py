@@ -1,8 +1,6 @@
-import numpy as np
-import time
 import random
 
-from abc import ABC, abstractmethod
+from abc import ABC
 
 
 class AbstractEnvironment(ABC):
@@ -19,6 +17,7 @@ class AbstractEnvironment(ABC):
 
     def step(self, action):
         raise NotImplemented
+
 
 class TreasureCube(AbstractEnvironment):
     def __init__(self, max_step=20):
@@ -128,8 +127,9 @@ class TreasureCube(AbstractEnvironment):
         elif action == 'right':
             if self.curr_pos[1] == self.dim - 1:  # wall
                 pass
-            elif self.curr_pos[1] == self.dim - 2 and self.curr_pos[0] == self.dim - 1 and self.curr_pos[
-                2] == self.dim - 1:
+            elif self.curr_pos[1] == self.dim - 2 \
+                    and self.curr_pos[0] == self.dim - 1 \
+                    and self.curr_pos[2] == self.dim - 1:
                 self.curr_pos[1] += 1
                 is_terminate = True
                 reward = 1
@@ -139,8 +139,9 @@ class TreasureCube(AbstractEnvironment):
         elif action == 'forward':
             if self.curr_pos[0] == self.dim - 1:  # wall
                 pass
-            elif self.curr_pos[0] == self.dim - 2 and self.curr_pos[1] == self.dim - 1 and self.curr_pos[
-                2] == self.dim - 1:
+            elif self.curr_pos[0] == self.dim - 2 \
+                    and self.curr_pos[1] == self.dim - 1 \
+                    and self.curr_pos[2] == self.dim - 1:
                 self.curr_pos[0] += 1
                 is_terminate = True
                 reward = 1
@@ -155,8 +156,9 @@ class TreasureCube(AbstractEnvironment):
         elif action == 'up':
             if self.curr_pos[2] == self.dim - 1:  # wall
                 pass
-            elif self.curr_pos[2] == self.dim - 2 and self.curr_pos[0] == self.dim - 1 and self.curr_pos[
-                1] == self.dim - 1:
+            elif self.curr_pos[2] == self.dim - 2 \
+                    and self.curr_pos[0] == self.dim - 1 \
+                    and self.curr_pos[1] == self.dim - 1:
                 self.curr_pos[2] += 1
                 is_terminate = True
                 reward = 1
@@ -200,4 +202,3 @@ class TreasureCube(AbstractEnvironment):
         self.slip_actions['down'] = ['left', 'right', 'forward', 'backward', 'down']
         self.slip_actions['forward'] = ['left', 'right', 'up', 'down', 'forward']
         self.slip_actions['backward'] = ['left', 'right', 'up', 'down', 'backward']
-
