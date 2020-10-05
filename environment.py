@@ -42,7 +42,7 @@ class TreasureCube(AbstractEnvironment):
         return ''.join(str(pos) for pos in self.curr_pos)
 
     def step(self, action, stochastic=True):
-        in_action = action  # action from agent
+        in_action = action  # action from agents
         assert action in self.all_actions
         reward = -0.1
         is_terminate = False
