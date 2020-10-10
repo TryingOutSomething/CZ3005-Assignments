@@ -26,7 +26,7 @@ def test_cube(max_episode, max_step):
             # env.render()  # comment
             # print(f'step: {t}, action: {action}, reward: {reward}')  # comment
             no_of_steps += 1
-            agent.train(state, action, next_state, reward)
+            # agent.generate_episode(state, action, next_state, reward)
             state = next_state
         print(f'episode: {episode_num}, total_steps: {no_of_steps} episode reward: {episode_reward}')
 

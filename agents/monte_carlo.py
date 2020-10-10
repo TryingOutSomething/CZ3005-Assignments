@@ -28,28 +28,9 @@ class MonteCarloAgent:
     def get_action_index_from_action_space(self, action):
         return self.action_space.index(action)
 
-    def generate_episode(self, env):
-        terminate = False
-        no_of_steps = 0
-        episode_reward = 0
-        episode = []
+    def train(self, episode):
+        state_actions_in_episode = list(set([(sar[0], sar[1]) for sar in episode]))
 
-        current_state = env.reset()
-
-        while not terminate:
-            action = self.take_action(current_state)
-            reward, terminate, next_state = env.step(action)
-            episode_reward += reward
-            # you can comment the following two lines, if the output is too much
-            # env.render()  # comment
-            # print(f'step: {t}, action: {action}, reward: {reward}')  # comment
-            no_of_steps += 1
-            episode.append((current_state, action, reward))
-            current_state = next_state
-
-        return episode, episode_reward, no_of_steps
-
-    def train(self, state_actions_in_episode, episode):
         for i, sa_pair in enumerate(state_actions_in_episode):
             state, action = sa_pair
             action_index = self.get_action_index_from_action_space(action)
