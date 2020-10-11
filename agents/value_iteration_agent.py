@@ -1,76 +1,70 @@
 from collections import defaultdict
+from copy import deepcopy
 
-import numpy as np
-
-from utils import get_list_of_possible_actions, get_transition_probability, generate_all_possible_states, \
-    convert_string_state_to_list
+import utils
 
 ACTION_SPACE = ['left', 'right', 'forward', 'backward', 'up', 'down']
-THETA = 0.1
+THETA = 0.001
 
 
 class ValueIterationAgent:
-    def __init__(self, environment):
-        self.env = environment
+    def __init__(self, environment_dimension):
         self.v_table = defaultdict(lambda: 0.0)
+        self.q_table = defaultdict(lambda: 0.0)
         self.policy = defaultdict(str)
-        self.state_list = generate_all_possible_states(environment.dim)
+        self.state_list = utils.generate_all_possible_states(environment_dimension)
         self.discount_factor = 0.99
+        self.set_reward_for_goal_state_in_v_table()
 
-    def train(self):
-        self.generate_v_table()
-        self.generate_optimal_policy()
+    def set_reward_for_goal_state_in_v_table(self):
+        self.v_table['333'] = 1.0
 
-    def generate_v_table(self):
-        self.env.reset()
+    def value_iteration(self):
+        for state in self.state_list:
+            self.calculate_q_table_action_values_for_state(state)
 
-        while True:
-            delta = 0
+            max_q_value = utils.get_max_q_value_for_state_action_pair(self.q_table, state)
+            self.v_table[state] = max_q_value
+            self.policy[state] = self.get_best_action_for_state(state, max_q_value)
 
-            for state in self.state_list:
-                q_table_row = self.generate_q_table_row_for_state(state)
-
-                best_action_value_from_q_table = np.max(q_table_row)
-                difference = np.abs(best_action_value_from_q_table - self.v_table[state])
-                delta = max(delta, difference)
-
-                self.v_table[state] = best_action_value_from_q_table
-
-            if delta < THETA:
-                break
-
-    def generate_q_table_row_for_state(self, current_state):
-        action_index = 0
-        q_table_of_actions = np.zeros(len(ACTION_SPACE))
-
+    def calculate_q_table_action_values_for_state(self, current_state):
         for action in ACTION_SPACE:
-            all_possible_actions = get_list_of_possible_actions(action, ACTION_SPACE)
+            q_value = self.calculate_q_value_for_state(current_state, action)
+            self.q_table[current_state, action] = q_value
 
-            q_table_of_actions[action_index] = self.calculate_q_value_for_action(all_possible_actions,
-                                                                                 action,
-                                                                                 current_state)
-            action_index += 1
+    def calculate_q_value_for_state(self, current_state, current_action):
+        all_possible_actions = utils.get_list_of_possible_actions(current_action, ACTION_SPACE)
 
-        return q_table_of_actions
-
-    def calculate_q_value_for_action(self, all_possible_actions, current_state_action, current_state):
-        action_value = 0
+        q_value = 0
 
         for action in all_possible_actions:
-            # self.env.curr_pos = deepcopy(current_state)
-            self.env.curr_pos = convert_string_state_to_list(current_state)
+            transition_probability = utils.get_transition_probability(action, current_action)
+            next_state = utils.determine_next_state(current_state, current_action)
+            reward = utils.get_current_state_reward(current_state)
+            q_value += transition_probability * (reward + self.discount_factor * self.v_table[next_state])
 
-            reward, _, next_state = self.env.step(action)
+        return q_value
 
-            transition_probability = get_transition_probability(action, current_state_action)
-            action_value += transition_probability * (reward + self.discount_factor * self.v_table[next_state])
+    def get_best_action_for_state(self, current_state, max_q_value):
+        for (state, action), q_value in self.q_table.items():
+            if state != current_state or q_value != max_q_value:
+                continue
 
-        return action_value
+            return action
 
-    def generate_optimal_policy(self):
-        self.env.reset()
+    def has_converged(self, old_v_table):
+        for key, value in self.v_table.items():
+            delta = abs(value - old_v_table.get(key))
 
-        for state in self.state_list:
-            q_table_row = self.generate_q_table_row_for_state(state)
-            best_action_index = np.argmax(q_table_row)
-            self.policy[state] = ACTION_SPACE[best_action_index]
+            if delta > THETA:
+                return False
+
+        return True
+
+    def train(self):
+        converges = False
+
+        while not converges:
+            old_v_table = deepcopy(self.v_table)
+            self.value_iteration()
+            converges = self.has_converged(old_v_table)

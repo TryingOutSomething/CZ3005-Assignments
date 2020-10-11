@@ -4,7 +4,7 @@ from agents.value_iteration_agent import ValueIterationAgent
 from environment import TreasureCube
 
 env = TreasureCube(max_step=5000)
-agent = ValueIterationAgent(env)
+agent = ValueIterationAgent(env.dim)
 
 agent.train()
 
