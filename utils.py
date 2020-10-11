@@ -1,6 +1,17 @@
 from copy import deepcopy
 
 
+def generate_all_possible_states(dimension):
+    return list(
+        dict.fromkeys(
+            [f"{i}{j}{k}"
+             for i in range(dimension)
+             for j in range(dimension)
+             for k in range(dimension)]
+        )
+    )
+
+
 def get_list_of_possible_actions(action, action_space):
     copy_of_action_space = deepcopy(action_space)
 
@@ -65,20 +76,3 @@ def get_current_state_reward(state):
 
 def get_max_q_value_for_state_action_pair(q_table, state):
     return max([value for key, value in q_table.items() if key[0] == state])
-
-
-# deprecated
-def convert_string_state_to_list(state):
-    return list(map(int, state))
-
-
-# deprecated
-def generate_all_possible_states(dimension):
-    return list(
-        dict.fromkeys(
-            [f"{i}{j}{k}"
-             for i in range(dimension)
-             for j in range(dimension)
-             for k in range(dimension)]
-        )
-    )

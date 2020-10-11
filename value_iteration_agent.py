@@ -5,7 +5,7 @@ import numpy as np
 import utils
 
 ACTION_SPACE = ['left', 'right', 'forward', 'backward', 'up', 'down']
-THETA = 0.1
+THETA = 0.001
 
 
 class ValueIterationAgent:
@@ -13,7 +13,7 @@ class ValueIterationAgent:
         self.v_table = defaultdict(lambda: 0.0)
         self.policy = defaultdict(str)
         self.state_list = utils.generate_all_possible_states(environment_dimension)
-        self.discount_factor = 0.9
+        self.discount_factor = 0.95
         self.set_reward_for_goal_state_in_v_table()
 
     def set_reward_for_goal_state_in_v_table(self):
