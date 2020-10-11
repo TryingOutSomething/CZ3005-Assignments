@@ -9,7 +9,7 @@ def test_cube(max_episode, max_step):
     agent = ValueIterationAgent(env.dim)
 
     agent.train()
-    # pprint(agent.v_table)
+
     for episode_num in range(0, max_episode):
         state = env.reset()
 
