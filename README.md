@@ -15,3 +15,8 @@ This project contains 2 files given to us:
 In order to run the Agent in the environment in `test.py`, the project requires these 2 files:
 1. `value_iteration_agent.py` - The Agent to be let loose in the environment
 2. `utils.py` - Utility functions that the Agent depends to perform additional computations in the environment.
+
+If the project is not able to run due to missing dependencies, install the required packages manually or from `requirements.txt` by runing this command:
+```
+pip install -r requirements.txt
+```
